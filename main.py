@@ -6,6 +6,6 @@ from functions import *
 
 #Début
 
-#Fin
+afficherlivres()
 
-print("yo")
+#Fin

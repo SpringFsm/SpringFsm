@@ -6,11 +6,19 @@
 
 #Début
 
+#Affiche tous les livres
 def afficherlivres():
-    with open("C:/Users/Fabio Malta/PycharmProjects/projetPython1/books.txt", "r") as f:
+    with open("C:/Users/PycharmProjects/SpringFsm/books.txt", "r") as f:
         for ligne in f:
             print(ligne)
 
+#Affiche tous les styles de lecture
+def afficher_styles():
+    styles = ["1-Science-fiction", "2-Biographie,", "3-Horreur", "4-Romance", "5-Fable", "6-Histoire", "7-Comédie"]
+    for i in styles:
+        print(i)
+
+#crée un nouveau profil de lecteur
 def ajoutelecteur():
     #Messages réutilisables et variables
     erreur = "Réponse invalide, veuillez réessayer"
@@ -59,13 +67,5 @@ def ajoutelecteur():
         except ValueError:
             print(erreur)
 
-
-
     print(pseudo,genre,age,style)
-
-
-def afficher_styles():
-    styles = ["1-Science-fiction", "2-Biographie,", "3-Horreur", "4-Romance", "5-Fable", "6-Histoire", "7-Comédie"]
-    for i in styles:
-        print(i)
 
