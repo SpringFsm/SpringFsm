@@ -1,0 +1,19 @@
+1 - Débuter la programmation Java
+2 - Apprendre Python
+3 - Les Citations du Président Mao Tse-Toung
+4 - Don Quichotte de la Manche
+5 - Un conte de deux villes
+6 - Le Seigneur des Anneaux
+7 - Le Petit Prince
+8 - Harry Potter à l'école des sorciers
+9 - Le Hobbit
+10 - Dix Petits Nègres
+11 - Le rêve dans le Pavillon rouge
+12 - Le Lion, la Sorcière blanche et l'Armoire magique
+13 - Elle - She : a history of Adventure
+14 - The Da Vinci Code
+15 - Réfléchissez et devenez riche
+16 - Harry Potter et le Prince de Sang mêlé
+17 - L'Alchimiste
+18 - Harry Potter et la Chambre des Secrets
+19 - L'attrape-coeurs, The Catcher in the Rye

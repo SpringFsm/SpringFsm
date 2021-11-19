@@ -6,4 +6,4 @@ from functions import *
 
 #Début
 
-print("Début")
+#Fin
