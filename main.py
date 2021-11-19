@@ -7,3 +7,5 @@ from functions import *
 #Début
 
 #Fin
+
+print("yo")
