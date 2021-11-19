@@ -68,3 +68,5 @@ def afficher_styles():
     styles = ["1-Science-fiction", "2-Biographie,", "3-Horreur", "4-Romance", "5-Fable", "6-Histoire", "7-Comédie"]
     for i in styles:
         print(i)
+
+#commentaire inutile
