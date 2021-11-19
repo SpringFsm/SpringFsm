@@ -69,4 +69,3 @@ def afficher_styles():
     for i in styles:
         print(i)
 
-#commentaire inutile
