@@ -6,6 +6,6 @@ from functions import *
 
 #Début
 
-afficherlivres()
+ajoutelecteur()
 
 #Fin

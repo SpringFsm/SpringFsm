@@ -8,7 +8,7 @@
 
 #Affiche tous les livres
 def afficherlivres():
-    with open("C:/Users/PycharmProjects/SpringFsm/books.txt", "r") as f:
+    with open("C:/Users/Fabio Malta/PycharmProjects/SpringFsm/books.txt", "r") as f:
         for ligne in f:
             print(ligne)
 
@@ -58,10 +58,12 @@ def ajoutelecteur():
         age = 2
     #style
     while True:
-        try :
+        try:
+            afficher_styles()
             style = int(input("Choisissez le nombre correspondant à votre style de lecture \n"))
             while style < 1 or style > 7:
                 afficher_styles()
+                print(erreur)
                 style = int(input("Choisissez le nombre correspondant à votre style de lecture \n"))
             break
         except ValueError:
