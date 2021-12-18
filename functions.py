@@ -70,16 +70,34 @@ def pseudoin(fichier,pseudo):
             line = f.readline()
     return rep
 
+#retourne True si le titre est dans le fichier books, False sinon
+def livrein(books,titre):
+    liste_tempo = []
+    rep = False
+    with open(books, "r", encoding='utf-8') as f:
+        line = f.readline()
+        while line != '':
+            line = line[:-1]
+            liste_tempo = line.split(" _ ")
+            if titre == liste_tempo[1]:
+                rep = True
+            line = f.readline()
+    return rep
+
+#simple affichage de matrice
+def affichermatrice(m):
+    for i in m:
+        print(i)
+
 #Fonction du projet
 #crée un nouveau profil de lecteur
-def ajoutelecteur(readers,books,booksread):
+def ajouterlecteur(m,readers,books,booksread):
     #Messages réutilisables et variables
     erreur = "Réponse invalide, veuillez réessayer"
     genres = "1 - Homme , 2 - Femme , 3 - Autre"
     ages =""
     #pseudo
     pseudo = input("Choisissez un Pseudonyme :\n")
-    pseudo = pseudo.lower()
     rep = pseudoin(readers,pseudo)
     if rep == False:
         # genre
@@ -145,13 +163,15 @@ def ajoutelecteur(readers,books,booksread):
                 s.write(", ")
                 s.write(i)
             s.write("\n")
+
+        updateajouterlecteur(m, books)
+
     else:
         print("Ce pseudo existe déja.")
 
 #affiche toutes le information du lecteur avec pseudo donné
 def afficherlecteur(readers,books,booksread):
     pseud = input("Saisissez le pseudo du lecteur :\n")
-    pseud = pseud.lower()
     rep = pseudoin(readers,pseud)
     if rep == True:
         nbligne = 0
@@ -237,7 +257,6 @@ def afficherlecteur(readers,books,booksread):
 #modifie toutes les informations sur un lecteur
 def modifierlecteur(readers,books,booksread):
     pseudo = input("Saisissez le pseudo du lecteur :\n")
-    pseudo = pseudo.lower()
     rep = pseudoin(readers,pseudo)
     if rep == True:
 
@@ -281,7 +300,7 @@ def modifierlecteur(readers,books,booksread):
                     if i != 0:
                         h.write(i)
 
-            ajoutelecteur(readers, books, booksread)
+            ajouterlecteur(readers, books, booksread)
 
             # on écrit les lignes "apres" dans les fichiers readers et booksread sans efacer ce qu'il y avait avant
             with open(readers, 'a') as j:
@@ -297,12 +316,10 @@ def modifierlecteur(readers,books,booksread):
         print("Pseudo non registré")
 
 #suprime les informations sur un lecteur
-def suprimerlecteur(readers,booksread):
+def suprimerlecteur(m,readers,booksread):
     pseudo = input("Saisissez le pseudo du lecteur :\n")
-    pseudo = pseudo.lower()
     rep = pseudoin(readers,pseudo)
     if rep == True :
-
         nbligne = 0
         with open(readers, "r") as f:
             ligne = f.readline()
@@ -355,25 +372,322 @@ def suprimerlecteur(readers,booksread):
 
             print("Les information du lecteur : ", pseudo, "on été supprimées.")
 
+        updatesupprimerlecteur(m,nbligne)
+
     else:
         print("Pseudo non registré")
 
-def Ajouter_Livres(fichier):
-    with open(fichier, "r") as f:
-        Titre=input("Saisissez le titre de livre que vous voulez ajoutez")
-        ligne = f.readline()
-        NbLigne=1
-        count=1
-        while ligne!="":
-            count+=1
-            if Titre in ligne:
-                NbLigne=count
-                return("Votre livre est deja enregistrée à la ligne", count-1)
-            ligne = f.readline()
-            NbLigne=count
-        else:
-            with open(fichier, "a") as f:
-                NbLigne=str(NbLigne)
-                f.write(NbLigne + " - ")
-                f.write(Titre + "\n")
+#ajoute un livre à la fin du fichier books si il n'existe pas encore
+def ajouterlivre(m,books,readers):
+    titre = input("Titre ?\n")
+    rep = livrein(books,titre)
+    if rep == False:
+        with open(books,"r") as f:
+            nblignes = len(f.readlines())
+        with open(books,"a") as a:
+            leligne = str(nblignes+1) + " _ " + titre + "\n"
+            a.write(leligne)
 
+        updateajouterlivre(m,readers)
+    else:
+        print("Ce livre existe déjà.")
+
+#modifie le titre d'un livre dont on donne le numéro
+def modifierlivre(books):
+    titre = input("Saisissez le livre que vous voulez supprimer:\n")
+    rep = livrein(books, titre)
+    if rep == True:
+        nvtitre = input("Titre ?\n")
+
+        with open(books, "r", encoding='utf-8') as f:
+            ligne = []
+            line = f.readline()
+            while line != "":
+                line = line[:-1]
+                line = line.split(" _ ")
+                line = line[1:]
+                line = line[0]
+                ligne.append(line)
+                line = f.readline()
+
+            count = 0
+            for i in ligne:
+                if i == titre:
+                    nbligne = count
+                count += 1
+            nbligne += 1
+
+            # on stocke les lignes avant et après celle que l'utilisateur veut modifier du fichier books
+            apres = ligne.copy()
+            for i in range(nbligne):
+                apres[i] = 0
+            avant = ligne.copy()
+            for j in range(nbligne - 1, len(avant)):
+                avant[j] = 0
+
+            # on écrit les lignes avant en effaçant le fichier + le numéro du livre
+            count = 1
+            with open(books, "w", encoding="utf-8") as f:
+                for i in avant:
+                    if i != 0:
+                        ligne = str(count) + " _ " + i + "\n"
+                        f.write(ligne)
+                        count += 1
+
+            with open(books, "a", encoding="utf-8") as g:
+                ligne = str(count) + " _ " + nvtitre + "\n"
+                g.write(ligne)
+
+            # on écrit les lignes apres + le numéro du livre
+            with open(books, "a", encoding="utf-8") as h:
+                for i in apres:
+                    if i != 0:
+                        ligne = str(count + 1) + " _ " + i + "\n"
+                        h.write(ligne)
+                        count += 1
+
+    else:
+        print("Ce livre n'est pas registré.")
+
+#supprime un livre choisis du fichier et décale les numéros des livres
+def suprimerlivre(m,books,booksread):
+    titre = input("Saisissez le livre que vous voulez supprimer:\n")
+    rep = livrein(books, titre)
+    if rep == True:
+        with open(books,"r",encoding='utf-8') as f:
+            ligne = []
+            line = f.readline()
+            while line != "":
+                line = line[:-1]
+                line = line.split(" _ ")
+                line = line[1:]
+                line = line[0]
+                ligne.append(line)
+                line = f.readline()
+
+        count = 0
+        for i in ligne:
+            if i == titre:
+                nbligne = count
+            count+=1
+        nbligne += 1
+
+        # on stocke les lignes avant et après celle que l'utilisateur veut modifier du fichier books
+        apres = ligne.copy()
+        for i in range(nbligne):
+            apres[i] = 0
+        avant = ligne.copy()
+        for j in range(nbligne - 1, len(avant)):
+            avant[j] = 0
+
+        #on écrit les lignes avant en effaçant le fichier + le numéro du livre
+        count = 1
+        with open(books, "w",encoding="utf-8") as f:
+            for i in avant:
+                if i!=0:
+                    ligne = str(count) + " _ " + i + "\n"
+                    f.write(ligne)
+                    count += 1
+        #on écrit les lignes apres + le numéro du livre
+        with open(books, "a",encoding="utf-8") as f:
+            for i in apres:
+                if i!=0:
+                    ligne = str(count) + " _ " + i + "\n"
+                    f.write(ligne)
+                    count += 1
+
+        ligne = []
+        listelignes = []
+
+        with open(booksread, "r") as f:
+            lignes = f.readlines()
+            for i in lignes:
+                i = i[:-1]
+                l = i.split(', ')
+                for j in l:
+                    if j != str(nbligne):
+                        ligne.append(j)
+                listelignes.append(ligne)
+                ligne = []
+
+        with open(booksread, "w") as f:
+            for i in listelignes:
+                i = ', '.join(i)
+                f.write(i)
+                f.write('\n')
+
+        print(titre, " a été supprimé.")
+
+        updatesupprimerlivre(m,nbligne)
+
+    else:
+        print("Ce livre n'est pas registré.")
+
+#création d'une matrice (init à 0) en fonction du nombre de livres et lecteurs
+def matricedenotes(books,readers):
+    with open(readers, "r") as f:
+        ligne=f.readlines()
+    with open(books, "r") as f:
+        colonnes = f.readlines()
+    M=[]
+    for i in range(len(ligne)):
+        L=[]
+        for j in range(len(colonnes)):
+            L.append(0)
+        M.append(L)
+    return M
+
+#ajoute une note dans la matrice
+def notationlivres(m,readers,books,booksread):
+    pseudonyme = input("Saisissez votre pseudonyme:\n")
+    rep = pseudoin(readers,pseudonyme)
+    if rep == True:
+        titre = input("Saisissez le titre du livre que vous voulez noter:\n")
+        rep2 = livrein(books,titre)
+        if rep2 == True:
+            with open(books, "r", encoding='utf-8') as f:
+                ligne = []
+                line = f.readline()
+                while line != "":
+                    line = line[:-1]
+                    line = line.split(" _ ")
+                    line = line[1:]
+                    line = line[0]
+                    ligne.append(line)
+                    line = f.readline()
+
+            count = 0
+            for i in ligne:
+                if i == titre:
+                    nbligne = count
+                count += 1
+            nbligne += 1
+
+            with open(booksread, "r") as f:
+                ligne = f.readline()
+                count = 0
+                while ligne != "":
+                    count += 1
+                    if pseudonyme in ligne:
+                        nbpseudo = count
+                    ligne = f.readline()
+
+            rep3 = False
+            leligne = alleralaligne(nbpseudo, booksread).split(', ')
+            leligne[-1] = leligne[-1][:-1]
+
+            for i in leligne:
+                if i == str(nbligne):
+                    rep3 = True
+
+            if rep3 == True:
+                while True:
+                    try:
+                        note = int(input("Donnez une note entre 1 et 5 à ce livre :\n1 : Vous n'avez pas aimé le livre\n5 : Vous adorez le livre\n"))
+                        while note < 1 or note > 5:
+                            print("Votre réponse est invalide. Donnez une note entre 1 et 5")
+                            note = int(input("Donnez une note entre 1 et 5 à ce livre :\n1 : Vous n'avez pas aimé le livre\n5 : Vous adorez le livre\n"))
+                        break
+                    except ValueError:
+                        print("Réponse invalide")
+
+                nbligne -= 1
+                nbpseudo -= 1
+                m[nbpseudo][nbligne] = note
+
+            else:
+                print("Le lecteur na pas encore lu ce livre")
+
+        else:
+            print("Ce livre n'est pas enregistré.")
+
+    else:
+        print("Pseudo non registré.")
+
+#fonctions d'update de la matrice
+#ajoute une ligne à la matrice quand on ajoute un lecteur
+def updateajouterlecteur(m,books):
+    with open(books,"r") as f:
+        total = f.readlines()
+        nblignes = len(total)
+    liste_tempo = []
+    for i in range(nblignes):
+        liste_tempo.append(0)
+    m.append(liste_tempo)
+
+#supprime une ligne à la matrice quand on supprime un lecteur
+def updatesupprimerlecteur(m,nbligne):
+    del m[nbligne - 1]
+
+#ajoute une colonne à la matrice quand on ajoute un livre
+def updateajouterlivre(m,readers):
+    with open(readers,"r") as f:
+        total = f.readlines()
+        nbreaders = len(total)
+        for i in range(nbreaders):
+            m[i].append(0)
+
+#supprime dans la matrice la colonne du livre suprimé
+def updatesupprimerlivre(m,nbligne):
+    for i in m:
+        del i[nbligne - 1]
+
+
+
+def suggererlivre(m,readers,books):
+    print(m,readers,books)
+
+
+#fonction qui lance le menu et permet à l'utilisateur d'utiliser toutes les fonctions que nous avons construit précédement
+def main(m,books,booksread,readers):
+    options = int(input("Que voulez vous faire \n1 : Apporter des modifications aux lecteurs\n2 : Apporter des modifications aux livres\n3 : Noter des livres\n4 : Sortir\n"))
+    if options == 1:
+        optionslecteur = int(input("Que voulez vous faire :\n1 : Ajouter lecteur\n2 : Afficher lecteur\n3 : Modifier lecteur\n4 : Supprimer lecteur\n5 : Revenir en arrière\n"))
+        if optionslecteur == 1:
+            ajouterlecteur(m,readers, books, booksread)
+            main(m,books,booksread,readers)
+        elif optionslecteur == 2:
+            afficherlecteur(readers,books,booksread)
+            main(m,books,booksread,readers)
+        elif optionslecteur == 3:
+            modifierlecteur(readers,books,booksread)
+            main(m, books, booksread, readers)
+        elif optionslecteur == 4:
+            suprimerlecteur(m,readers,booksread)
+            main(m, books, booksread, readers)
+        elif optionslecteur == 5:
+            main(m,books,booksread,readers)
+
+    elif options == 2:
+        optionslivres = int(input("Que voulez vous faire :\n1 : Ajouter un livre\n2 : Modifier un livre\n3 : Supprimer un livre\n4 : Revenir en arrière\n"))
+        if optionslivres == 1:
+            ajouterlivre(m,books,readers)
+            main(m, books, booksread, readers)
+        elif optionslivres == 2:
+            modifierlivre(books)
+            main(m, books, booksread, readers)
+        elif optionslivres == 3:
+            suprimerlivre(m,books,booksread)
+            main(m, books, booksread, readers)
+        elif optionslivres == 4:
+            main(m, books, booksread, readers)
+
+    elif options == 3:
+        optionrecomendation = int(input("Que voulez vous faire :\n1 : Afficher la matrice des notes\n2 : Ajouter une note à un livre\n3 : Suggérer un livre\n4 : Revenir en arrière\n"))
+        if optionrecomendation == 1:
+            affichermatrice(m)
+            main(m, books, booksread, readers)
+        elif optionrecomendation == 2:
+            notationlivres(m,readers,books,booksread)
+            main(m, books, booksread, readers)
+        elif optionrecomendation == 3:
+            suggererlivre(m,readers,books)
+            main(m, books, booksread, readers)
+        elif optionrecomendation == 4:
+            main(m, books, booksread, readers)
+    elif options == 4:
+        sortir = int(input("Etes vous sur de vouloir sortir :\n1 : Oui\n2 : Non\n"))
+        if sortir == 1:
+            print("Au revoir !\n")
+        elif sortir == 2:
+            main(m, books, booksread, readers)
